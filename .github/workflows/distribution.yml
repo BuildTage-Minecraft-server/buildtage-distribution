@@ -1,0 +1,90 @@
+name: Publish distribution
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+env:
+  BASE_URL: ${{ vars.BASE_URL || 'https://cdn.nekrasovdev.space/' }}
+  DEPLOY_TARGET: ${{ vars.DEPLOY_TARGET || 'pages' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install Nebula
+        run: |
+          git clone --depth 1 https://github.com/dscalzi/Nebula.git "$RUNNER_TEMP/nebula"
+          echo "Nebula commit: $(git -C "$RUNNER_TEMP/nebula" rev-parse HEAD)"
+          npm ci --prefix "$RUNNER_TEMP/nebula"
+
+      - name: Generate distribution
+        working-directory: ${{ runner.temp }}/nebula
+        env:
+          ROOT: ${{ github.workspace }}
+        run: |
+          export JAVA_EXECUTABLE="$JAVA_HOME/bin/java"
+          npm run start -- generate distro
+
+      - name: Collect site
+        env:
+          ROOT: ${{ github.workspace }}
+        run: node scripts/collect-site.mjs
+
+      - name: Publish to R2
+        if: env.DEPLOY_TARGET == 'r2'
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          set -euo pipefail
+          export AWS_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID"
+          export AWS_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY"
+          export AWS_DEFAULT_REGION=auto
+          export AWS_REQUEST_CHECKSUM_CALCULATION=when_required
+          export AWS_RESPONSE_CHECKSUM_VALIDATION=when_required
+          endpoint="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
+          aws s3 sync site "s3://${R2_BUCKET}" --endpoint-url "$endpoint" --delete --exclude "distribution.json" --cache-control "public, max-age=3600"
+          aws s3 cp site/distribution.json "s3://${R2_BUCKET}/distribution.json" --endpoint-url "$endpoint" --cache-control "no-cache" --content-type "application/json"
+
+      - uses: actions/configure-pages@v5
+        if: env.DEPLOY_TARGET == 'pages'
+
+      - uses: actions/upload-pages-artifact@v3
+        if: env.DEPLOY_TARGET == 'pages'
+        with:
+          path: site
+
+  deploy-pages:
+    needs: build
+    if: ${{ (vars.DEPLOY_TARGET || 'pages') == 'pages' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
