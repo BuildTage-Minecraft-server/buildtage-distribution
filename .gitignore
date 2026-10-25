@@ -4,3 +4,4 @@ repo/
 distribution.json
 schemas/
 .env
+cache/

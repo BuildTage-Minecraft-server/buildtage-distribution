@@ -7,7 +7,7 @@ This repository is the single source of truth for what the launcher installs. It
 ## How it works
 
 1. A push to `main` starts the `Publish distribution` workflow.
-2. The workflow installs Java 17 and Node.js 22, fetches Nebula and runs `generate distro` against this repository.
+2. The workflow installs Java 17 and Node.js 22 and runs the Forge installer without a window (`scripts/prepare-forge.mjs`), because Nebula expects it to be run by hand. Then it fetches Nebula and runs `generate distro` against this repository.
 3. `scripts/collect-site.mjs` copies exactly the files referenced by `distribution.json` into `site/`, fails if one of them is missing and checks the 1 GiB limit of GitHub Pages.
 4. The `site/` folder is published to the configured hosting target, GitHub Pages by default.
 
@@ -20,7 +20,8 @@ servers/<id>/forgemods/required/       mods every player gets
 servers/<id>/forgemods/optionalon/     optional mods, enabled by default
 servers/<id>/forgemods/optionaloff/    optional mods, disabled by default
 servers/<id>/files/                    configs and other files
-scripts/collect-site.mjs               builds the folder published to Pages
+scripts/prepare-forge.mjs              installs Forge into the cache that Nebula reads
+scripts/collect-site.mjs               builds the folder that gets published
 ```
 
 ## Updating the mod set
