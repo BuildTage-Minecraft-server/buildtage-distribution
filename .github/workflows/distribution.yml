@@ -44,6 +44,12 @@ jobs:
           path: cache/forge
           key: forge-${{ hashFiles('servers/*/servermeta.json') }}
 
+      - name: Prepare server folders
+        run: |
+          for server in servers/*/; do
+            mkdir -p "${server}files" "${server}libraries" "${server}forgemods/required" "${server}forgemods/optionalon" "${server}forgemods/optionaloff"
+          done
+
       - name: Prepare Forge
         env:
           ROOT: ${{ github.workspace }}

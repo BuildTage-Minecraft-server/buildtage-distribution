@@ -5,3 +5,4 @@ distribution.json
 schemas/
 .env
 cache/
+servers/*/claritasWork/
