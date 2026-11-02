@@ -44,6 +44,11 @@ jobs:
           path: cache/forge
           key: forge-${{ hashFiles('servers/*/servermeta.json') }}
 
+      - name: Normalize file names
+        env:
+          ROOT: ${{ github.workspace }}
+        run: node scripts/normalize-names.mjs
+
       - name: Prepare server folders
         run: |
           for server in servers/*/; do

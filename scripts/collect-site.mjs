@@ -45,6 +45,33 @@ function visit(node) {
 
 visit(distro)
 
+const duplicates = []
+for (const server of distro.servers ?? []) {
+    const files = new Map()
+    const collect = (modules) => {
+        for (const entry of modules ?? []) {
+            const enabled = entry.required?.value !== false || entry.required?.def !== false
+            if (entry.type === 'ForgeMod' && enabled) {
+                const [group, artifact] = entry.id.split(':')
+                const key = `${group}:${artifact}`
+                const file = decodeURIComponent(new URL(entry.artifact.url).pathname).split('/').pop()
+                files.set(key, [...(files.get(key) ?? []), file])
+            }
+            collect(entry.subModules)
+        }
+    }
+    collect(server.modules)
+    for (const [key, names] of files) {
+        if (names.length > 1) {
+            duplicates.push(`${server.id}: ${key}\n    ${names.join('\n    ')}`)
+        }
+    }
+}
+
+if (duplicates.length > 0) {
+    fail(`the same mod is present more than once, Forge loads one file per mod:\n${duplicates.map(item => `  ${item}`).join('\n')}`)
+}
+
 rmSync(outDir, { recursive: true, force: true })
 mkdirSync(outDir, { recursive: true })
 
@@ -52,14 +79,13 @@ const missing = []
 let total = 0
 
 for (const url of urls) {
-    const encoded = new URL(url).pathname.slice(basePath.length)
-    const relative = decodeURIComponent(encoded)
+    const relative = decodeURIComponent(new URL(url).pathname.slice(basePath.length))
     const source = resolve(root, relative)
     if (!source.startsWith(root + sep)) {
         fail(`refusing to copy outside of the root: ${relative}`)
     }
     if (!existsSync(source)) {
-        missing.push(existsSync(resolve(root, encoded)) ? `${encoded} (the file name contains "%", rename the file)` : relative)
+        missing.push(relative)
         continue
     }
     const target = join(outDir, relative)

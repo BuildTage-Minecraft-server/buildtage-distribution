@@ -7,10 +7,11 @@ This repository is the single source of truth for what the launcher installs and
 ## How it works
 
 1. A push to `main` starts the `Publish distribution` workflow.
-2. The workflow installs Java 17 and Node.js 22 and runs the Forge installer without a window (`scripts/prepare-forge.mjs`), because Nebula expects it to be run by hand. Then it fetches Nebula and runs `generate distro` against this repository.
-3. `scripts/collect-site.mjs` copies exactly the files referenced by `distribution.json` into `site/`, fails if one of them is missing and checks the 1 GiB limit of GitHub Pages.
-4. The `site/` folder is published to the configured hosting target, GitHub Pages by default.
-5. If server deployment is enabled, the `Deploy server` workflow starts after a successful publish and updates the Minecraft server, see [Server deployment](#server-deployment).
+2. `scripts/normalize-names.mjs` renames files whose names cannot be used in URLs, for example `mod%20name.jar` becomes `mod name.jar`. The renaming happens in the build only, the repository is not changed.
+3. The workflow installs Java 17 and Node.js 22 and runs the Forge installer without a window (`scripts/prepare-forge.mjs`), because Nebula expects it to be run by hand. Then it fetches Nebula and runs `generate distro` against this repository.
+4. `scripts/collect-site.mjs` copies exactly the files referenced by `distribution.json` into `site/`, fails if one of them is missing or if the same mod is present twice, and checks the 1 GiB limit of GitHub Pages.
+5. The `site/` folder is published to the configured hosting target, GitHub Pages by default.
+6. If server deployment is enabled, the `Deploy server` workflow starts after a successful publish and updates the Minecraft server, see [Server deployment](#server-deployment).
 
 ## Repository layout
 
@@ -24,6 +25,7 @@ servers/<id>/files/                    configs and other files for players
 servers/<id>/files/config/             configs for players and the server
 servers/<id>/server/mods/              mods for the server only
 servers/<id>/server/config/            configs for the server only
+scripts/normalize-names.mjs            fixes file names that would break URLs
 scripts/prepare-forge.mjs              installs Forge into the cache that Nebula reads
 scripts/collect-site.mjs               builds the folder that gets published
 scripts/deploy-server.mjs              syncs mods and configs into the server container
@@ -68,7 +70,7 @@ The `Deploy server` workflow keeps the `CBO` Docker container in sync with the r
 
 Each run works as follows:
 
-1. `scripts/deploy-server.mjs` builds the wanted state from the paths above.
+1. File names are normalized as in the publish workflow, then `scripts/deploy-server.mjs` builds the wanted state from the paths above.
 2. Mods are compared by SHA-256 with the jars in the `mods` folder of the server, so manual changes there are reverted. Other files in that folder are never touched. An empty mod set is refused, which protects the server from a wrong path.
 3. Configs are compared with the manifest of the previous deployment instead of the live files, because mods often rewrite their own configs. A config is sent only when its content in the repository changed, and a config removed from the repository stays on the server.
 4. If nothing changed, the run ends here. A push that only touches the README does not restart the server.
@@ -127,7 +129,7 @@ The same build can be published to two places. The `DEPLOY_TARGET` repository va
 
 - GitHub Pages accepts a site of up to 1 GiB, so this setup fits mod sets of that size. Larger sets need another host. The URLs inside `distribution.json` are built from `BASE_URL` in the workflow, so moving the files only means changing that value and the DNS record.
 - Commit only mods that may be redistributed, the repository is public.
-- Keep one version of each mod in `required/`. Forge refuses to load two files of the same mod, on players' machines and on the server.
-- Mod file names must not contain `%`, for example `mod%20name.jar` left over from a browser download. Nebula writes the name into the URL unescaped, so the URL would point to a different file than the one in the repository and the publish step fails. Rename such files.
+- Keep one version of each mod. Forge refuses to load two files of the same mod, on players' machines and on the server, so the build fails when a mod is present twice.
+- File names are normalized during the build: percent escapes such as `%20`, left over from browser downloads, are decoded, and the characters `%`, `#` and `?` that remain are replaced with `_`, because Nebula writes names into URLs unescaped. The repository is not changed. Run `node scripts/normalize-names.mjs` locally to apply the same renames and commit them.
 - Never commit secrets. Configs that contain tokens or passwords do not belong here, they would be public too.
 - Nebula is cloned from its default branch on every run. Pin a commit in the workflow for reproducible builds.

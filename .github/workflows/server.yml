@@ -35,6 +35,11 @@ jobs:
         with:
           node-version: 22
 
+      - name: Normalize file names
+        env:
+          ROOT: ${{ github.workspace }}
+        run: node scripts/normalize-names.mjs
+
       - name: Deploy mods and configs
         env:
           ROOT: ${{ github.workspace }}
