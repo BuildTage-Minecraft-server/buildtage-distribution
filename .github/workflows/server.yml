@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: ${{ vars.DEPLOY_SERVER == 'true' && (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success') }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (vars.DEPLOY_SERVER == 'true' && github.event.workflow_run.conclusion == 'success') }}
     runs-on: [self-hosted, linux, cbo]
     timeout-minutes: 30
     environment: cbo-server

@@ -55,7 +55,7 @@ Configs in `files/config/` are applied to the server too, see below.
 
 ## Server deployment
 
-The `Deploy server` workflow keeps the `CBO` Docker container in sync with the repository. It starts after every successful `Publish distribution` run and can also be started by hand.
+The `Deploy server` workflow keeps the `CBO` Docker container in sync with the repository. It can always be started by hand. With the `DEPLOY_SERVER` variable set to `true` it also starts after every successful `Publish distribution` run.
 
 | Repository path | Players | Server |
 | --- | --- | --- |
@@ -84,7 +84,9 @@ The job runs on a [self-hosted runner](https://docs.github.com/actions/hosting-y
 
 1. Add a runner to the repository (Settings, Actions, Runners) with the label `cbo` and install it as a service.
 2. Run the service as a user that can use Docker and write to the data directory of the container.
-3. Set the repository variable `DEPLOY_SERVER` to `true`. Without it the workflow does nothing, so forks are not affected.
+3. Start the `Deploy server` workflow by hand with `dry_run` enabled. It lists the changes without touching the server. The first run makes the `mods` folder match the repository, so every jar that is not in the repository would be moved to the backup folder.
+4. Start it by hand again without `dry_run` to apply the changes.
+5. Set the repository variable `DEPLOY_SERVER` to `true` to deploy after every successful publish. Without it the workflow never starts on its own, so forks are not affected.
 
 Optional repository variables:
 
@@ -93,8 +95,6 @@ Optional repository variables:
 | `SERVER_ID` | `CBO-1.20.1` | Folder in `servers/` to deploy |
 | `CBO_CONTAINER` | `CBO` | Name of the Docker container |
 | `CBO_DATA_DIR` | read from the container | Host path that is mounted at `/data` in the container |
-
-Start the workflow by hand with `dry_run` enabled to list the changes without touching the server. Do this before the first real deployment: the first run makes the `mods` folder match the repository, so every jar that is not in the repository is moved to the backup folder.
 
 The `cbo-server` environment can be protected with required reviewers (Settings, Environments) if each deployment should be confirmed by hand.
 
