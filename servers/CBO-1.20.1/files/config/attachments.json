@@ -1,0 +1,622 @@
+{
+  "attachments": [
+    {
+      "id": "tacz:scope_lpvo_1_6",
+      "displayName": "tacz.attachment.scope_lpvo_1_6.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "tacz:scope_mk5hd",
+      "displayName": "tacz.attachment.scope_mk5hd.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "tacz:scope_retro_2x",
+      "displayName": "tacz.attachment.scope_retro_2x.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "tacz:m4",
+      "displayName": "Comp M4",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "tacz:sight_coyote",
+      "displayName": "tacz.attachment.sight_coyote.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "tacz:sight_okp7",
+      "displayName": "tacz.attachment.sight_okp7.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "tacz:sight_fastfire_pistol",
+      "displayName": "tacz.attachment.sight_fastfire_pistol.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "tacz:sight_pk06_pistol",
+      "displayName": "tacz.attachment.sight_pk06_pistol.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "tacz:sight_sro_dot",
+      "displayName": "tacz.attachment.sight_sro_dot.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "maxstuff:sight_rmr_dot_raised",
+      "displayName": "maxstuff.attachment.sight_rmr_dot_raised.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "maxstuff:scope_acog_canted",
+      "displayName": "maxstuff.attachment.scope_acog_canted.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "maxstuff:tac_laser",
+      "displayName": "maxstuff.attachment.tac_laser.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "maxstuff:sight_okp7_ak",
+      "displayName": "maxstuff.attachment.sight_okp7_ak.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "maxstuff:sight_sro_dot_raised",
+      "displayName": "maxstuff.attachment.sight_sro_dot_raised.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "maxstuff:retro_2x_ak",
+      "displayName": "maxstuff.attachment.retro_2x_ak.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "maxstuff:canted_irons",
+      "displayName": "maxstuff.attachment.canted_irons.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "maxstuff:vuduu",
+      "displayName": "maxstuff.attachment.vuduu.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "maxstuff:scope_pso1_ak",
+      "displayName": "maxstuff.attachment.scope_pso1_ak.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "tacz:shotgun_extended_mag_3",
+      "displayName": "tacz.attachment.shotgun_extended_mag_3.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:shotgun_extended_mag_2",
+      "displayName": "tacz.attachment.shotgun_extended_mag_2.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:shotgun_extended_mag_1",
+      "displayName": "tacz.attachment.shotgun_extended_mag_1.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:light_extended_mag_3",
+      "displayName": "tacz.attachment.light_extended_mag_3.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:light_extended_mag_2",
+      "displayName": "tacz.attachment.light_extended_mag_2.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:light_extended_mag_1",
+      "displayName": "tacz.attachment.light_extended_mag_1.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:extended_mag_3",
+      "displayName": "tacz.attachment.extended_mag_3.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:extended_mag_2",
+      "displayName": "tacz.attachment.extended_mag_2.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:extended_mag_1",
+      "displayName": "tacz.attachment.extended_mag_1.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:subsonic",
+      "displayName": "Subsonic Rounds",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:ammo_mod_he",
+      "displayName": "tacz.attachment.ammo_mod_he.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:ammo_mod_hp",
+      "displayName": "tacz.attachment.ammo_mod_hp.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:ammo_mod_fmj",
+      "displayName": "tacz.attachment.ammo_mod_fmj.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:ammo_mod_slug",
+      "displayName": "tacz.attachment.ammo_mod_slug.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:ammo_mod_i",
+      "displayName": "tacz.attachment.ammo_mod_i.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:sniper_extended_mag_3",
+      "displayName": "tacz.attachment.sniper_extended_mag_3.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:sniper_extended_mag_2",
+      "displayName": "tacz.attachment.sniper_extended_mag_2.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:sniper_extended_mag_1",
+      "displayName": "tacz.attachment.sniper_extended_mag_1.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "ronmc:m32a1_he",
+      "displayName": "ronmc.attachment.m32a1_he.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "maxstuff:speed_mag",
+      "displayName": "maxstuff.attachment.speed_mag.name",
+      "unlockLevel": 0,
+      "attachmentType": "EXTENDED_MAG"
+    },
+    {
+      "id": "tacz:grip_vertical_talon",
+      "displayName": "tacz.attachment.grip_vertical_talon.name",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "tacz:grip_td",
+      "displayName": "tacz.attachment.grip_td",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "tacz:grip_se_5",
+      "displayName": "tacz.attachment.grip_se_5",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "tacz:grip_osovets_black",
+      "displayName": "tacz.attachment.grip_osovets_black.name",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "tacz:grip_rk6",
+      "displayName": "tacz.attachment.grip_rk6.name",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "tacz:grip_cobra",
+      "displayName": "tacz.attachment.grip_cobra.name",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "tacz:grip_magpul_afg_2",
+      "displayName": "tacz.attachment.grip_magpul_afg_2.name",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "tacz:m1918bip",
+      "displayName": "M1918 Bipod",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "tacz:harris",
+      "displayName": "Harris Bipod",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "gucci_attachments:grip_bipod1",
+      "displayName": "gucci_attachments.attachment.grip_bipod1",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "gucci_attachments:grip_bipod2",
+      "displayName": "gucci_attachments.attachment.grip_bipod2",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "gucci_attachments:grip_vert1",
+      "displayName": "gucci_attachments.attachment.grip_vert1",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "gucci_attachments:grip_angled3",
+      "displayName": "gucci_attachments.attachment.grip_angled3",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "gucci_attachments:grip_flat",
+      "displayName": "gucci_attachments.attachment.grip_flat",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "gucci_attachments:grip_cqr_g2",
+      "displayName": "gucci_attachments.attachment.grip_cqr_g2.name",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "gucci_attachments:grip_vg1",
+      "displayName": "gucci_attachments.attachment.grip_vg1.name",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "gucci_attachments:grip_anchorage",
+      "displayName": "gucci_attachments.attachment.grip_anchorage",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "gucci_attachments:grip_minivert",
+      "displayName": "gucci_attachments.attachment.grip_minivert.name",
+      "unlockLevel": 0,
+      "attachmentType": "GRIP"
+    },
+    {
+      "id": "ronmc:laser_pointer",
+      "displayName": "ronmc.attachment.laser_pointer.name",
+      "unlockLevel": 0,
+      "attachmentType": "LASER"
+    },
+    {
+      "id": "ronmc:custom_laser",
+      "displayName": "ronmc.attachment.custom_laser.name",
+      "unlockLevel": 0,
+      "attachmentType": "LASER"
+    },
+    {
+      "id": "ronmc:laser_peq15",
+      "displayName": "ronmc.attachment.laser_peq15.name",
+      "unlockLevel": 0,
+      "attachmentType": "LASER"
+    },
+    {
+      "id": "lradd:laser_hs507c",
+      "displayName": "lradd.attachment.laser_hs507c.name",
+      "unlockLevel": 0,
+      "attachmentType": "LASER"
+    },
+    {
+      "id": "gucci_attachments:laser_hs507c",
+      "displayName": "gucci_attachments.attachment.laser_hs507c.name",
+      "unlockLevel": 0,
+      "attachmentType": "LASER"
+    },
+    {
+      "id": "tacz:laser_nightstick",
+      "displayName": "tacz.attachment.laser_nightstick",
+      "unlockLevel": 0,
+      "attachmentType": "LASER"
+    },
+    {
+      "id": "tacz:laser_compact",
+      "displayName": "tacz.attachment.laser_compact",
+      "unlockLevel": 0,
+      "attachmentType": "LASER"
+    },
+    {
+      "id": "tacz:laser_lopro",
+      "displayName": "tacz.attachment.laser_lopro",
+      "unlockLevel": 0,
+      "attachmentType": "LASER"
+    },
+    {
+      "id": "tacz:laser_peq6",
+      "displayName": "tacz.attachment.laser_peq6",
+      "unlockLevel": 0,
+      "attachmentType": "LASER"
+    },
+    {
+      "id": "maxstuff:peq15",
+      "displayName": "maxstuff.attachment.peq15.name",
+      "unlockLevel": 0,
+      "attachmentType": "LASER"
+    },
+    {
+      "id": "daffas_arsenal:laser_regular",
+      "displayName": "daffas_arsenal.attachment.laser_regular.name",
+      "unlockLevel": 0,
+      "attachmentType": "LASER"
+    },
+    {
+      "id": "tacz:stock_hk_slim_line",
+      "displayName": "tacz.attachment.stock_hk_slim_line.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:stock_sba3",
+      "displayName": "tacz.attachment.stock_sba3.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:stock_carbon_bone_c5",
+      "displayName": "tacz.attachment.stock_carbon_bone_c5.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:stock_m4ss",
+      "displayName": "tacz.attachment.stock_m4ss.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:sawn",
+      "displayName": "Sawn off M1887 Conversion",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:stock_ak12",
+      "displayName": "tacz.attachment.stock_ak12.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:oem_stock_heavy",
+      "displayName": "tacz.attachment.oem_stock_heavy.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:oem_stock_light",
+      "displayName": "tacz.attachment.oem_stock_light.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:oem_stock_tactical",
+      "displayName": "tacz.attachment.oem_stock_tactical.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:stock_militech_b5",
+      "displayName": "tacz.attachment.stock_militech_b5.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:stock_ripstock",
+      "displayName": "tacz.attachment.stock_ripstock.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:stock_moe",
+      "displayName": "tacz.attachment.stock_moe.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:stock_tactical_ar",
+      "displayName": "tacz.attachment.stock_tactical_ar.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:stock_heavy_spas_12",
+      "displayName": "tacz.attachment.stock_heavy_spas_12.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:stock_tactical_spas_12",
+      "displayName": "tacz.attachment.stock_tactical_spas_12.name",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "gucci_attachments:stock_precise",
+      "displayName": "gucci_attachments.attachment.stock_precise",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "gucci_attachments:stock_bojin1",
+      "displayName": "gucci_attachments.attachment.stock_bojin1",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "gucci_attachments:stock_heavy1",
+      "displayName": "gucci_attachments.attachment.stock_heavy1",
+      "unlockLevel": 0,
+      "attachmentType": "STOCK"
+    },
+    {
+      "id": "tacz:deagle_golden_long_barrel",
+      "displayName": "tacz.attachment.deagle_golden_long_barrel.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_silencer_vulture",
+      "displayName": "tacz.attachment.muzzle_silencer_vulture.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:bayonet_m9",
+      "displayName": "tacz.attachment.bayonet_m9.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_silencer_sg",
+      "displayName": "tacz.attachment.muzzle_silencer_sg.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_silencer_kac",
+      "displayName": "KAC Mk 23 Silencer",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:can",
+      "displayName": "§dWould you hold still, please?",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_brake_timeless50",
+      "displayName": "tacz.attachment.muzzle_brake_timeless50.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_brake_mastiff_sg",
+      "displayName": "tacz.attachment.muzzle_brake_mastiff_sg.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_silencer_ptilopsis",
+      "displayName": "tacz.attachment.muzzle_silencer_ptilopsis.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_brake_pioneer",
+      "displayName": "tacz.attachment.muzzle_brake_pioneer.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_silencer_wraith",
+      "displayName": "tacz.attachment.muzzle_silencer_wraith.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_brake_cyclone_d2",
+      "displayName": "tacz.attachment.muzzle_brake_cyclone_d2.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_brake_trex",
+      "displayName": "tacz.attachment.muzzle_brake_trex.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_silencer_mirage",
+      "displayName": "tacz.attachment.muzzle_silencer_mirage.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:bayonet_6h3",
+      "displayName": "tacz.attachment.bayonet_6h3.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_compensator_trident",
+      "displayName": "tacz.attachment.muzzle_compensator_trident.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_silencer_knight_qd",
+      "displayName": "tacz.attachment.muzzle_silencer_knight_qd.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    },
+    {
+      "id": "tacz:muzzle_silencer_phantom_s1",
+      "displayName": "tacz.attachment.muzzle_silencer_phantom_s1.name",
+      "unlockLevel": 0,
+      "attachmentType": "MUZZLE"
+    }
+  ]
+}

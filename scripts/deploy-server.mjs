@@ -1,0 +1,242 @@
+import { spawnSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
+import { appendFileSync, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
+
+const root = resolve(process.env.ROOT ?? process.cwd())
+const serverId = process.env.SERVER_ID || 'CBO-1.20.1'
+const container = process.env.CBO_CONTAINER || 'CBO'
+const stopTimeout = Number(process.env.CBO_STOP_TIMEOUT || 120)
+const startTimeout = Number(process.env.CBO_START_TIMEOUT || 600)
+const keepBackups = Number(process.env.CBO_KEEP_BACKUPS || 5)
+const dryRun = process.env.DRY_RUN === 'true'
+const serverDir = join(root, 'servers', serverId)
+const manifestName = '.deploy-manifest.json'
+const backupName = '.deploy-backup'
+
+function fail(message) {
+    console.error(`error: ${message}`)
+    process.exit(1)
+}
+
+function run(args) {
+    const result = spawnSync('docker', args, { encoding: 'utf8' })
+    if (result.error) {
+        fail(`docker is not available: ${result.error.message}`)
+    }
+    return result
+}
+
+function docker(...args) {
+    const result = run(args)
+    if (result.status !== 0) {
+        fail(`docker ${args[0]} failed: ${result.stderr.trim()}`)
+    }
+    return result.stdout
+}
+
+function inspect() {
+    return JSON.parse(docker('inspect', container))[0]
+}
+
+function jars(dir) {
+    const found = new Map()
+    if (!existsSync(dir)) {
+        return found
+    }
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        if (entry.isFile() && entry.name.endsWith('.jar')) {
+            found.set(entry.name, join(dir, entry.name))
+        }
+    }
+    return found
+}
+
+function tree(dir, accept = () => true) {
+    const found = new Map()
+    const walk = (relative) => {
+        for (const entry of readdirSync(join(dir, relative), { withFileTypes: true })) {
+            const path = relative ? `${relative}/${entry.name}` : entry.name
+            if (entry.isDirectory()) {
+                walk(path)
+            } else if (entry.isFile() && accept(path)) {
+                found.set(path, join(dir, path))
+            }
+        }
+    }
+    if (existsSync(dir)) {
+        walk('')
+    }
+    return found
+}
+
+function hashed(files) {
+    const result = new Map()
+    for (const [name, path] of files) {
+        result.set(name, { path, hash: createHash('sha256').update(readFileSync(path)).digest('hex') })
+    }
+    return result
+}
+
+function wantedState() {
+    const mods = new Map([
+        ...jars(join(serverDir, 'forgemods', 'required')),
+        ...jars(join(serverDir, 'server', 'mods'))
+    ])
+    const config = new Map([
+        ...tree(join(serverDir, 'files', 'config'), path => !path.endsWith('-client.toml')),
+        ...tree(join(serverDir, 'server', 'config'))
+    ])
+    return { mods: hashed(mods), config: hashed(config) }
+}
+
+function readManifest(dataDir) {
+    try {
+        return new Map(Object.entries(JSON.parse(readFileSync(join(dataDir, manifestName), 'utf8')).config))
+    } catch {
+        return new Map()
+    }
+}
+
+function plan(wanted, dataDir) {
+    const live = hashed(jars(join(dataDir, 'mods')))
+    const previous = readManifest(dataDir)
+    const mods = []
+    const config = []
+
+    for (const [name, item] of wanted.mods) {
+        if (!live.has(name)) {
+            mods.push({ kind: 'mods', action: 'added', name, source: item.path })
+        } else if (live.get(name).hash !== item.hash) {
+            mods.push({ kind: 'mods', action: 'updated', name, source: item.path })
+        }
+    }
+    for (const name of live.keys()) {
+        if (!wanted.mods.has(name)) {
+            mods.push({ kind: 'mods', action: 'removed', name })
+        }
+    }
+    for (const [name, item] of wanted.config) {
+        if (!previous.has(name)) {
+            config.push({ kind: 'config', action: 'added', name, source: item.path })
+        } else if (previous.get(name) !== item.hash) {
+            config.push({ kind: 'config', action: 'updated', name, source: item.path })
+        }
+    }
+
+    const byName = (a, b) => a.name.localeCompare(b.name)
+    return [...mods.sort(byName), ...config.sort(byName)]
+}
+
+function report(changes) {
+    const lines = changes.map(change => `${change.action.padEnd(8)} ${change.kind}/${change.name}`)
+    console.log(`server: ${changes.length} changes`)
+    console.log(lines.join('\n'))
+    if (process.env.GITHUB_STEP_SUMMARY) {
+        appendFileSync(process.env.GITHUB_STEP_SUMMARY, `### ${container}\n\n\`\`\`\n${lines.join('\n')}\n\`\`\`\n`)
+    }
+}
+
+function apply(changes, wanted, dataDir) {
+    const backupRoot = join(dataDir, backupName)
+    const backup = join(backupRoot, new Date().toISOString().replace(/[:.]/g, '-'))
+
+    const save = (kind, name, move) => {
+        const target = join(dataDir, kind, name)
+        if (!existsSync(target)) {
+            return
+        }
+        const saved = join(backup, kind, name)
+        mkdirSync(dirname(saved), { recursive: true })
+        if (move) {
+            renameSync(target, saved)
+        } else {
+            copyFileSync(target, saved)
+        }
+    }
+    const put = (kind, name, source) => {
+        const target = join(dataDir, kind, name)
+        mkdirSync(dirname(target), { recursive: true })
+        copyFileSync(source, target)
+    }
+
+    for (const change of changes) {
+        save(change.kind, change.name, change.kind === 'mods')
+        if (change.action !== 'removed') {
+            put(change.kind, change.name, change.source)
+        }
+    }
+
+    const config = Object.fromEntries([...wanted.config].map(([name, item]) => [name, item.hash]))
+    writeFileSync(join(dataDir, manifestName), `${JSON.stringify({ config }, null, 2)}\n`)
+
+    if (existsSync(backupRoot)) {
+        for (const name of readdirSync(backupRoot).sort().reverse().slice(keepBackups)) {
+            rmSync(join(backupRoot, name), { recursive: true, force: true })
+        }
+    }
+}
+
+function stopServer() {
+    console.log(`server: stopping ${container}`)
+    docker('stop', '--time', String(stopTimeout), container)
+}
+
+function startServer() {
+    console.log(`server: starting ${container}`)
+    docker('start', container)
+}
+
+async function waitUntilHealthy() {
+    const deadline = Date.now() + startTimeout * 1000
+    while (Date.now() < deadline) {
+        const { State } = inspect()
+        if (State.Status === 'running' && (!State.Health || State.Health.Status === 'healthy')) {
+            return
+        }
+        if (!['running', 'restarting', 'created'].includes(State.Status)) {
+            break
+        }
+        await new Promise(resolve => setTimeout(resolve, 5000))
+    }
+    const logs = run(['logs', '--tail', '50', container])
+    console.error(`${logs.stdout}${logs.stderr}`)
+    fail(`${container} did not become healthy`)
+}
+
+if (!existsSync(serverDir)) {
+    fail(`${serverDir} does not exist`)
+}
+
+const dataDir = process.env.CBO_DATA_DIR || inspect().Mounts.find(mount => mount.Destination === '/data')?.Source
+if (!dataDir || !existsSync(dataDir)) {
+    fail(`the data directory of ${container} was not found or is not accessible, set CBO_DATA_DIR`)
+}
+
+const wanted = wantedState()
+if (wanted.mods.size === 0) {
+    fail(`no mods found for ${serverId}, refusing to empty the server`)
+}
+
+const changes = plan(wanted, dataDir)
+if (changes.length === 0) {
+    console.log(`server: ${container} is up to date`)
+    process.exit(0)
+}
+
+report(changes)
+
+if (dryRun) {
+    console.log('server: dry run, nothing was changed')
+    process.exit(0)
+}
+
+stopServer()
+try {
+    apply(changes, wanted, dataDir)
+} catch (error) {
+    fail(`the sync failed and ${container} was left stopped: ${error.message}`)
+}
+startServer()
+await waitUntilHealthy()
+console.log(`server: ${container} is healthy`)

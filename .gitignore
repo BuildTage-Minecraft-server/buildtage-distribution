@@ -6,3 +6,4 @@ schemas/
 .env
 cache/
 servers/*/claritasWork/
+repomix-output.xml

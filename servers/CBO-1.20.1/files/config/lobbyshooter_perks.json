@@ -1,0 +1,209 @@
+{
+  "perks": [
+    {
+      "id": "speed",
+      "item": "lobbyshooter:perk_speed",
+      "name": "Скорость",
+      "description": "+25% к скорости движения",
+      "icon": "skull.png",
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.movement_speed",
+          "amount": 0.25,
+          "operation": "MULTIPLY_TOTAL",
+          "uuid": "a1000001-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "resist",
+      "item": "lobbyshooter:perk_resist",
+      "name": "Броня",
+      "description": "+15 брони.",
+      "icon": "skull.png",
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.armor",
+          "amount": 15.0,
+          "operation": "ADDITION",
+          "uuid": "a1000001-0000-4000-8000-000000000002"
+        }
+      ]
+    },
+    {
+      "id": "vitality",
+      "item": "lobbyshooter:perk_vitality",
+      "name": "Живучесть",
+      "description": "+50 макс. хп.",
+      "icon": "skull.png",
+      "attributes": [
+        {
+          "attribute": "minecraft:generic.max_health",
+          "amount": 50.0,
+          "operation": "ADDITION",
+          "uuid": "a1000001-0000-4000-8000-000000000003"
+        }
+      ]
+    },
+    {
+      "id": "regen",
+      "item": "lobbyshooter:perk_regen",
+      "name": "Очищение",
+      "description": "Восстанавливайте на 2 хп больше",
+      "icon": "skull.png",
+      "attributes": [
+        {
+          "attribute": "extra_attr:regeneration",
+          "amount": 2.0,
+          "operation": "ADDITION",
+          "uuid": "a1000001-0000-4000-8000-000000000004"
+        }
+      ]
+    },
+    {
+      "id": "regen_on_kill",
+      "item": "lobbyshooter:perk_regenon_kill",
+      "name": "Адреналин",
+      "description": "При убийстве получите Регенерация I, Скорость I и Сопротивление I на 5 секунд(можно застакать до V уровня и 30 секунд)",
+      "icon": "skull.png",
+      "attributes": [
+        {
+          "attribute": "extra_attr:effect_of_kill",
+          "amount": 1.0,
+          "operation": "ADDITION",
+          "uuid": "a1000001-0000-4000-8000-000000000005"
+        }
+      ]
+    },
+    {
+      "id": "burn",
+      "item": "lobbyshooter:perk_burn",
+      "name": "Инферно",
+      "description": "Поджигайте при нанесение урона. Чем больше урона было нанесено, тем сильнее огонь. Огонь ломает броню от степени его силы.",
+      "icon": "skull.png",
+      "attributes": [
+        {
+          "attribute": "extra_attr:burn",
+          "amount": 50.0,
+          "operation": "ADDITION",
+          "uuid": "a1000001-0000-4000-8000-000000000006"
+        }
+      ]
+    },
+    {
+      "id": "vert_recoil",
+      "item": "lobbyshooter:perk_vert_recoil",
+      "name": "Стабилизатор",
+      "description": "-50% к вертикальной и горизонтальной отдаче",
+      "icon": "skull.png",
+      "attributes": [
+        {
+          "attribute": "gunsmithlib:vert_recoil",
+          "amount": -0.5,
+          "operation": "MULTIPLY_TOTAL",
+          "uuid": "a1000001-0000-4000-8000-000000000007"
+        },
+        {
+          "attribute": "gunsmithlib:vert_recoil",
+          "amount": -0.5,
+          "operation": "MULTIPLY_TOTAL",
+          "uuid": "a1000001-0000-4000-8000-000000000008"
+        }
+      ]
+    },
+    {
+      "id": "reload_speed",
+      "item": "lobbyshooter:perk_reload_speed",
+      "name": "Автоподача",
+      "description": "60% к скорости перезарядки",
+      "icon": "skull.png",
+      "attributes": [
+        {
+          "attribute": "gunsmithlib:reload_speed",
+          "amount": 0.6,
+          "operation": "ADDITION",
+          "uuid": "a1000001-0000-4000-8000-000000000009"
+        }
+      ]
+    },
+    {
+      "id": "combo",
+      "item": "lobbyshooter:perk_combo",
+      "name": "Комбо",
+      "description": "При убийстве восстановите 50% патронов от его ёмкости.",
+      "icon": "skull.png",
+      "attributes": [
+        {
+          "attribute": "tacz_attributes:ammo_recovery_percent",
+          "amount": 0.5,
+          "operation": "ADDITION",
+          "uuid": "a1000001-0000-4000-8000-000000000009"
+        },
+        {
+          "attribute": "tacz_attributes:ammo_recovery_chance",
+          "amount": 1,
+          "operation": "ADDITION",
+          "uuid": "a1000001-0000-4000-8000-0000000000010"
+        }
+      ]
+    },
+    {
+      "id": "invisibility",
+      "item": "lobbyshooter:perk_invisibility",
+      "name": "Невидимость",
+      "description": "При убийстве получите Невидимость I(можно застакать до V уровня и 30 секунд)",
+      "icon": "skull.png",
+      "attributes": [
+        {
+          "attribute": "extra_attr:effect_of_kill",
+          "amount": 2.0,
+          "operation": "ADDITION",
+          "uuid": "a1000001-0000-4000-8000-0000000000011"
+        }
+      ]
+    },
+    {
+      "id": "hipfire",
+      "item": "lobbyshooter:perk_hipfire",
+      "name": "Орлиный туз",
+      "description": "-30% к отдаче от бедра. -67% к разбросу от бедра.",
+      "icon": "skull.png",
+      "attributes": [
+        {
+          "attribute": "tacz_attributes:hip_fire_recoil",
+          "amount": -0.3,
+          "operation": "ADDITION",
+          "uuid": "a1000001-0000-4000-8000-0000000000012"
+        },
+        {
+          "attribute": "tacz_attributes:hip_fire_accuracy",
+          "amount": 2.0,
+          "operation": "ADDITION",
+          "uuid": "a1000001-0000-4000-8000-0000000000013"
+        }
+      ]
+    },
+    {
+      "id": "accuracy",
+      "item": "lobbyshooter:perk_accuracy",
+      "name": "Шоколадный глаз",
+      "description": "-33% к разбросу.",
+      "icon": "skull.png",
+      "attributes": [
+        {
+          "attribute": "tacz_attributes:ads_accuracy",
+          "amount": 0.5,
+          "operation": "ADDITION",
+          "uuid": "a1000001-0000-4000-8000-0000000000014"
+        },
+        {
+          "attribute": "tacz_attributes:hip_fire_accuracy",
+          "amount": 0.5,
+          "operation": "ADDITION",
+          "uuid": "a1000001-0000-4000-8000-0000000000015"
+        }
+      ]
+    }
+  ],
+  "_comment": "Edit perks freely. item = registry id (lowercase). description = text shown in the item tooltip (instead of attribute / slot lines). icon = PNG file name in config/lobbyshooter/perk_icons/ (any size, default <id>.png). attributes = list of changes, each {attribute: forge attribute id, amount: number, operation: ADDITION | MULTIPLY_BASE | MULTIPLY_TOTAL (also: add, mult_base, mult_total, mult)}; uuid is optional. One perk may change any number of attributes."
+}
