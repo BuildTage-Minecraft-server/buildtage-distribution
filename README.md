@@ -127,5 +127,7 @@ The same build can be published to two places. The `DEPLOY_TARGET` repository va
 
 - GitHub Pages accepts a site of up to 1 GiB, so this setup fits mod sets of that size. Larger sets need another host. The URLs inside `distribution.json` are built from `BASE_URL` in the workflow, so moving the files only means changing that value and the DNS record.
 - Commit only mods that may be redistributed, the repository is public.
+- Keep one version of each mod in `required/`. Forge refuses to load two files of the same mod, on players' machines and on the server.
+- Mod file names must not contain `%`, for example `mod%20name.jar` left over from a browser download. Nebula writes the name into the URL unescaped, so the URL would point to a different file than the one in the repository and the publish step fails. Rename such files.
 - Never commit secrets. Configs that contain tokens or passwords do not belong here, they would be public too.
 - Nebula is cloned from its default branch on every run. Pin a commit in the workflow for reproducible builds.

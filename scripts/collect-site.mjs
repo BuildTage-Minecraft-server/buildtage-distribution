@@ -52,13 +52,14 @@ const missing = []
 let total = 0
 
 for (const url of urls) {
-    const relative = decodeURIComponent(new URL(url).pathname.slice(basePath.length))
+    const encoded = new URL(url).pathname.slice(basePath.length)
+    const relative = decodeURIComponent(encoded)
     const source = resolve(root, relative)
     if (!source.startsWith(root + sep)) {
         fail(`refusing to copy outside of the root: ${relative}`)
     }
     if (!existsSync(source)) {
-        missing.push(relative)
+        missing.push(existsSync(resolve(root, encoded)) ? `${encoded} (the file name contains "%", rename the file)` : relative)
         continue
     }
     const target = join(outDir, relative)
