@@ -71,12 +71,13 @@ The `Deploy server` workflow keeps the `CBO` Docker container in sync with the r
 Each run works as follows:
 
 1. File names are normalized as in the publish workflow, then `scripts/deploy-server.mjs` builds the wanted state from the paths above.
-2. Mods are compared by SHA-256 with the jars in the `mods` folder of the server, so manual changes there are reverted. Other files in that folder are never touched. An empty mod set is refused, which protects the server from a wrong path.
+2. Mods are compared by SHA-256 with the jars in the mods folder, so manual changes there are reverted. Other files in that folder are never touched. An empty mod set is refused, which protects the server from a wrong path. If the container has a `/mods` mount, which the image copies into `/data/mods` on every start, the jars are written to the host folder behind that mount, and the stale copies of replaced or removed jars are deleted from `/data/mods`.
 3. Configs are compared with the manifest of the previous deployment instead of the live files, because mods often rewrite their own configs. A config is sent only when its content in the repository changed, and a config removed from the repository stays on the server.
 4. If nothing changed, the run ends here. A push that only touches the README does not restart the server.
-5. The container is stopped with a grace period of two minutes, so the world is saved.
-6. The changes are copied into the data directory of the container. Replaced and removed files are moved to `.deploy-backup/<timestamp>/` first, the last five backups are kept.
-7. The container is started and the run waits until its health check passes. A server that does not come up fails the run and prints the last log lines.
+5. Write access is checked for every file that is about to change. A missing permission fails the run before the server is touched.
+6. The container is stopped with a grace period of two minutes, so the world is saved.
+7. The changes are copied in. Replaced and removed files are moved to `.deploy-backup/<timestamp>/` in the data directory first, the last five backups are kept.
+8. The container is started and the run waits until its health check passes. A server that does not come up fails the run and prints the last log lines.
 
 To roll back, revert the commit. The next run puts the previous files back.
 
@@ -85,7 +86,7 @@ To roll back, revert the commit. The next run puts the previous files back.
 The job runs on a [self-hosted runner](https://docs.github.com/actions/hosting-your-own-runners) installed on the machine that hosts the container. The runner only makes outgoing connections, so no port has to be opened for deployments.
 
 1. Add a runner to the repository (Settings, Actions, Runners) with the label `cbo` and install it as a service.
-2. Run the service as a user that can use Docker and write to the data directory of the container.
+2. Run the service as a user that can use Docker and write to the data directory of the container and to the mods folder behind its `/mods` mount, if there is one.
 3. Start the `Deploy server` workflow by hand with `dry_run` enabled. It lists the changes without touching the server. The first run makes the `mods` folder match the repository, so every jar that is not in the repository would be moved to the backup folder.
 4. Start it by hand again without `dry_run` to apply the changes.
 5. Set the repository variable `DEPLOY_SERVER` to `true` to deploy after every successful publish. Without it the workflow never starts on its own, so forks are not affected.
@@ -97,6 +98,7 @@ Optional repository variables:
 | `SERVER_ID` | `CBO-1.20.1` | Folder in `servers/` to deploy |
 | `CBO_CONTAINER` | `CBO` | Name of the Docker container |
 | `CBO_DATA_DIR` | read from the container | Host path that is mounted at `/data` in the container |
+| `CBO_MODS_DIR` | read from the container | Host folder that receives the mods: the `/mods` mount if there is one, otherwise `mods` in the data directory |
 
 The `cbo-server` environment can be protected with required reviewers (Settings, Environments) if each deployment should be confirmed by hand.
 

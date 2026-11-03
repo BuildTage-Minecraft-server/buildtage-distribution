@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { appendFileSync, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs'
+import { accessSync, appendFileSync, constants, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 
 const root = resolve(process.env.ROOT ?? process.cwd())
@@ -98,9 +98,9 @@ function readManifest(dataDir) {
     }
 }
 
-function plan(wanted, dataDir) {
-    const live = hashed(jars(join(dataDir, 'mods')))
-    const previous = readManifest(dataDir)
+function plan(wanted, dirs) {
+    const live = hashed(jars(dirs.mods))
+    const previous = readManifest(dirs.data)
     const mods = []
     const config = []
 
@@ -137,38 +137,89 @@ function report(changes) {
     }
 }
 
-function apply(changes, wanted, dataDir) {
-    const backupRoot = join(dataDir, backupName)
+function preflight(changes, dirs) {
+    const denied = new Set()
+    const check = (path, mode) => {
+        try {
+            accessSync(path, mode)
+        } catch {
+            denied.add(path)
+        }
+    }
+
+    check(dirs.data, constants.W_OK)
+    for (const path of [join(dirs.data, backupName), join(dirs.data, manifestName)]) {
+        if (existsSync(path)) {
+            check(path, constants.R_OK | constants.W_OK)
+        }
+    }
+    for (const change of changes) {
+        const target = join(dirs[change.kind], change.name)
+        let parent = dirname(target)
+        while (!existsSync(parent)) {
+            parent = dirname(parent)
+        }
+        check(parent, constants.W_OK)
+        if (change.kind === 'config' && existsSync(target)) {
+            check(target, constants.R_OK | constants.W_OK)
+        }
+        if (change.kind === 'mods' && existsSync(join(dirs.runtimeMods, change.name))) {
+            check(dirs.runtimeMods, constants.W_OK)
+        }
+    }
+
+    if (denied.size > 0) {
+        fail(`this user has no write access to:\n${[...denied].map(path => `  ${path}`).join('\n')}`)
+    }
+}
+
+function move(from, to) {
+    try {
+        renameSync(from, to)
+    } catch (error) {
+        if (error.code !== 'EXDEV') {
+            throw error
+        }
+        copyFileSync(from, to)
+        rmSync(from)
+    }
+}
+
+function apply(changes, wanted, dirs) {
+    const backupRoot = join(dirs.data, backupName)
     const backup = join(backupRoot, new Date().toISOString().replace(/[:.]/g, '-'))
 
-    const save = (kind, name, move) => {
-        const target = join(dataDir, kind, name)
+    const save = (kind, name) => {
+        const target = join(dirs[kind], name)
         if (!existsSync(target)) {
             return
         }
         const saved = join(backup, kind, name)
         mkdirSync(dirname(saved), { recursive: true })
-        if (move) {
-            renameSync(target, saved)
+        if (kind === 'mods') {
+            move(target, saved)
         } else {
             copyFileSync(target, saved)
         }
     }
     const put = (kind, name, source) => {
-        const target = join(dataDir, kind, name)
+        const target = join(dirs[kind], name)
         mkdirSync(dirname(target), { recursive: true })
         copyFileSync(source, target)
     }
 
     for (const change of changes) {
-        save(change.kind, change.name, change.kind === 'mods')
+        save(change.kind, change.name)
         if (change.action !== 'removed') {
             put(change.kind, change.name, change.source)
+        }
+        if (change.kind === 'mods' && dirs.mods !== dirs.runtimeMods) {
+            rmSync(join(dirs.runtimeMods, change.name), { force: true })
         }
     }
 
     const config = Object.fromEntries([...wanted.config].map(([name, item]) => [name, item.hash]))
-    writeFileSync(join(dataDir, manifestName), `${JSON.stringify({ config }, null, 2)}\n`)
+    writeFileSync(join(dirs.data, manifestName), `${JSON.stringify({ config }, null, 2)}\n`)
 
     if (existsSync(backupRoot)) {
         for (const name of readdirSync(backupRoot).sort().reverse().slice(keepBackups)) {
@@ -208,9 +259,18 @@ if (!existsSync(serverDir)) {
     fail(`${serverDir} does not exist`)
 }
 
-const dataDir = process.env.CBO_DATA_DIR || inspect().Mounts.find(mount => mount.Destination === '/data')?.Source
+const mounts = inspect().Mounts
+const mountSource = destination => mounts.find(mount => mount.Destination === destination)?.Source
+const dataDir = process.env.CBO_DATA_DIR || mountSource('/data')
 if (!dataDir || !existsSync(dataDir)) {
     fail(`the data directory of ${container} was not found or is not accessible, set CBO_DATA_DIR`)
+}
+
+const dirs = {
+    data: dataDir,
+    mods: process.env.CBO_MODS_DIR || mountSource('/mods') || join(dataDir, 'mods'),
+    config: join(dataDir, 'config'),
+    runtimeMods: join(dataDir, 'mods')
 }
 
 const wanted = wantedState()
@@ -218,13 +278,14 @@ if (wanted.mods.size === 0) {
     fail(`no mods found for ${serverId}, refusing to empty the server`)
 }
 
-const changes = plan(wanted, dataDir)
+const changes = plan(wanted, dirs)
 if (changes.length === 0) {
     console.log(`server: ${container} is up to date`)
     process.exit(0)
 }
 
 report(changes)
+preflight(changes, dirs)
 
 if (dryRun) {
     console.log('server: dry run, nothing was changed')
@@ -233,7 +294,7 @@ if (dryRun) {
 
 stopServer()
 try {
-    apply(changes, wanted, dataDir)
+    apply(changes, wanted, dirs)
 } catch (error) {
     fail(`the sync failed and ${container} was left stopped: ${error.message}`)
 }

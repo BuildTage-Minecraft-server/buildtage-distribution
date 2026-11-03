@@ -46,5 +46,6 @@ jobs:
           SERVER_ID: ${{ vars.SERVER_ID }}
           CBO_CONTAINER: ${{ vars.CBO_CONTAINER }}
           CBO_DATA_DIR: ${{ vars.CBO_DATA_DIR }}
+          CBO_MODS_DIR: ${{ vars.CBO_MODS_DIR }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: node scripts/deploy-server.mjs
