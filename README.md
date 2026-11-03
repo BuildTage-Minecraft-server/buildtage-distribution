@@ -25,6 +25,7 @@ servers/<id>/files/                    configs and other files for players
 servers/<id>/files/config/             configs for players and the server
 servers/<id>/server/mods/              mods for the server only
 servers/<id>/server/config/            configs for the server only
+servers/<id>/server/exclude.txt        files that must not be sent to the server
 scripts/normalize-names.mjs            fixes file names that would break URLs
 scripts/prepare-forge.mjs              installs Forge into the cache that Nebula reads
 scripts/collect-site.mjs               builds the folder that gets published
@@ -34,7 +35,7 @@ repomix.config.json                    settings for packing the repository with 
 
 ## Updating the mod set
 
-1. Add, replace or remove jars in `servers/<id>/forgemods/required/`. Mods that only the server needs go to `servers/<id>/server/mods/`. Mods that only players need, such as a minimap or shaders, go to `optionalon/` or `optionaloff/`.
+1. Add, replace or remove jars in `servers/<id>/forgemods/required/`. Mods that only the server needs go to `servers/<id>/server/mods/`. Mods that only players need, such as a minimap or shaders, go to `optionalon/` or `optionaloff/`, or into `server/exclude.txt` if they have to stay mandatory.
 2. Optionally raise `meta.version` in `servermeta.json`.
 3. Commit and push. The workflow republishes the site, and players receive the changes the next time they start the launcher. If server deployment is enabled, the server receives the mod set as well.
 
@@ -68,9 +69,19 @@ The `Deploy server` workflow keeps the `CBO` Docker container in sync with the r
 | `server/mods/` | no | yes |
 | `server/config/` | no | yes, overrides `files/config/` |
 
+Files that must stay out of the server, for example client-only mods that have to remain mandatory for players, are listed in `servers/<id>/server/exclude.txt`. Each line is a pattern relative to the data directory of the server, `*` matches any characters, the case is ignored and lines starting with `#` are comments:
+
+```
+mods/embeddium-*.jar
+mods/fancymenu_*.jar
+config/fancymenu/*
+```
+
+A listed file is never sent. If it is already on the server, it is removed and moved to the backup folder.
+
 Each run works as follows:
 
-1. File names are normalized as in the publish workflow, then `scripts/deploy-server.mjs` builds the wanted state from the paths above.
+1. File names are normalized as in the publish workflow, then `scripts/deploy-server.mjs` builds the wanted state from the paths above, without the files listed in `exclude.txt`.
 2. Mods are compared by SHA-256 with the jars in the mods folder, so manual changes there are reverted. Other files in that folder are never touched. An empty mod set is refused, which protects the server from a wrong path. If the container has a `/mods` mount, which the image copies into `/data/mods` on every start, the jars are written to the host folder behind that mount, and the stale copies of replaced or removed jars are deleted from `/data/mods`.
 3. Configs are compared with the manifest of the previous deployment instead of the live files, because mods often rewrite their own configs. A config is sent only when its content in the repository changed, and a config removed from the repository stays on the server.
 4. If nothing changed, the run ends here. A push that only touches the README does not restart the server.

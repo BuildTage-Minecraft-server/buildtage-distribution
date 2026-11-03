@@ -78,7 +78,27 @@ function hashed(files) {
     return result
 }
 
+function exclusions() {
+    const path = join(serverDir, 'server', 'exclude.txt')
+    const lines = existsSync(path) ? readFileSync(path, 'utf8').split('\n') : []
+    const matchers = lines
+        .map(line => line.trim())
+        .filter(line => line !== '' && !line.startsWith('#'))
+        .map(line => new RegExp(`^${line.split('*').map(part => part.replace(/[.+?^${}()|[\]\\]/g, '\\$&')).join('.*')}$`, 'i'))
+    return key => matchers.some(matcher => matcher.test(key))
+}
+
 function wantedState() {
+    const skip = exclusions()
+    const excluded = []
+    const keep = (kind, files) => new Map([...files].filter(([name]) => {
+        if (skip(`${kind}/${name}`)) {
+            excluded.push(`${kind}/${name}`)
+            return false
+        }
+        return true
+    }))
+
     const mods = new Map([
         ...jars(join(serverDir, 'forgemods', 'required')),
         ...jars(join(serverDir, 'server', 'mods'))
@@ -87,7 +107,7 @@ function wantedState() {
         ...tree(join(serverDir, 'files', 'config'), path => !path.endsWith('-client.toml')),
         ...tree(join(serverDir, 'server', 'config'))
     ])
-    return { mods: hashed(mods), config: hashed(config) }
+    return { mods: hashed(keep('mods', mods)), config: hashed(keep('config', config)), excluded }
 }
 
 function readManifest(dataDir) {
@@ -274,6 +294,10 @@ const dirs = {
 }
 
 const wanted = wantedState()
+if (wanted.excluded.length > 0) {
+    console.log(`server: ${wanted.excluded.length} excluded by exclude.txt`)
+    console.log(wanted.excluded.sort().map(key => `excluded ${key}`).join('\n'))
+}
 if (wanted.mods.size === 0) {
     fail(`no mods found for ${serverId}, refusing to empty the server`)
 }

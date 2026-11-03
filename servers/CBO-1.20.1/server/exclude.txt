@@ -1,0 +1,14 @@
+mods/dynamic-fps-*.jar
+mods/embeddium-*.jar
+mods/entityculling-*.jar
+mods/fancymenu_*.jar
+mods/Forgematica-*.jar
+mods/gpumemleakfix-*.jar
+mods/GPUTape-*.jar
+mods/ImmediatelyFast-*.jar
+mods/konkrete_*.jar
+mods/MaFgLib-*.jar
+mods/melody_*.jar
+mods/notenoughanimations-*.jar
+mods/smoothboot*.jar
+mods/spiffyhud_*.jar
