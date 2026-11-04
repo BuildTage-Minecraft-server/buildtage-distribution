@@ -253,26 +253,45 @@ function stopServer() {
     docker('stop', '--time', String(stopTimeout), container)
 }
 
+let startedAt = ''
+
 function startServer() {
     console.log(`server: starting ${container}`)
+    startedAt = new Date().toISOString()
     docker('start', container)
 }
 
+function printLogs() {
+    const logs = run(['logs', '--since', startedAt, container])
+    const lines = `${logs.stdout}${logs.stderr}`.split('\n')
+    const errors = lines.filter(line => /\/(ERROR|FATAL)\]|Caused by|Exception|Error:|MixinTransformerError|Mixin apply failed|Critical injection|has failed to load/.test(line) && !/^\s+at /.test(line))
+    const shown = (errors.length > 0 ? errors : lines.slice(-50)).slice(0, 60)
+    console.error(shown.map(line => line.slice(0, 300)).join('\n'))
+    console.error(`server: the full log is in ${join(dirs.data, 'logs', 'latest.log')}`)
+}
+
 async function waitUntilHealthy() {
+    const baseline = inspect().RestartCount ?? 0
     const deadline = Date.now() + startTimeout * 1000
+    let crashed = false
     while (Date.now() < deadline) {
-        const { State } = inspect()
+        const info = inspect()
+        const { State } = info
         if (State.Status === 'running' && (!State.Health || State.Health.Status === 'healthy')) {
             return
         }
-        if (!['running', 'restarting', 'created'].includes(State.Status)) {
+        if ((info.RestartCount ?? 0) > baseline || !['running', 'restarting', 'created'].includes(State.Status)) {
+            crashed = true
             break
         }
         await new Promise(resolve => setTimeout(resolve, 5000))
     }
-    const logs = run(['logs', '--tail', '50', container])
-    console.error(`${logs.stdout}${logs.stderr}`)
-    fail(`${container} did not become healthy`)
+    printLogs()
+    if (crashed) {
+        run(['stop', '--time', '30', container])
+        fail(`${container} crashed during startup and was stopped`)
+    }
+    fail(`${container} did not become healthy within ${startTimeout} seconds`)
 }
 
 if (!existsSync(serverDir)) {
