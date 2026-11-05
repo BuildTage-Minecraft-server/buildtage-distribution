@@ -10,5 +10,7 @@ mods/konkrete_*.jar
 mods/MaFgLib-*.jar
 mods/melody_*.jar
 mods/notenoughanimations-*.jar
+mods/ShoulderSurfing-*.jar
 mods/smoothboot*.jar
 mods/spiffyhud_*.jar
+mods/tp_shooting-*.jar

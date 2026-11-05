@@ -267,12 +267,14 @@ function lastMixins() {
         return []
     }
     const size = statSync(path).size
-    const length = Math.min(size, 4 * 1024 * 1024)
+    const length = Math.min(size, 64 * 1024 * 1024)
     const buffer = Buffer.alloc(length)
     const file = openSync(path, 'r')
     readSync(file, buffer, 0, length, size - length)
     closeSync(file)
-    return buffer.toString('utf8').split('\n').filter(line => line.includes('Mixing ')).slice(-3)
+    const lines = buffer.toString('utf8').split('\n')
+    const failure = lines.findIndex(line => /MixinTransformerError|ClassMetadataNotFoundException|Mixin apply failed|InvalidMixinException|Critical injection failure/.test(line))
+    return lines.slice(0, failure === -1 ? lines.length : failure).filter(line => line.includes('Mixing ')).slice(-3)
 }
 
 function printLogs() {
