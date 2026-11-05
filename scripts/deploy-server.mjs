@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { accessSync, appendFileSync, constants, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs'
+import { accessSync, appendFileSync, closeSync, constants, copyFileSync, existsSync, mkdirSync, openSync, readdirSync, readFileSync, readSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 
 const root = resolve(process.env.ROOT ?? process.cwd())
@@ -261,12 +261,31 @@ function startServer() {
     docker('start', container)
 }
 
+function lastMixins() {
+    const path = join(dirs.data, 'logs', 'debug.log')
+    if (!existsSync(path)) {
+        return []
+    }
+    const size = statSync(path).size
+    const length = Math.min(size, 4 * 1024 * 1024)
+    const buffer = Buffer.alloc(length)
+    const file = openSync(path, 'r')
+    readSync(file, buffer, 0, length, size - length)
+    closeSync(file)
+    return buffer.toString('utf8').split('\n').filter(line => line.includes('Mixing ')).slice(-3)
+}
+
 function printLogs() {
     const logs = run(['logs', '--since', startedAt, container])
     const lines = `${logs.stdout}${logs.stderr}`.split('\n')
     const errors = lines.filter(line => /\/(ERROR|FATAL)\]|Caused by|Exception|Error:|MixinTransformerError|Mixin apply failed|Critical injection|has failed to load/.test(line) && !/^\s+at /.test(line))
     const shown = (errors.length > 0 ? errors : lines.slice(-50)).slice(0, 60)
     console.error(shown.map(line => line.slice(0, 300)).join('\n'))
+    const mixins = errors.some(line => line.includes('Mixin')) ? lastMixins() : []
+    if (mixins.length > 0) {
+        console.error('server: the last mixins applied before the failure, the failing one is the last:')
+        console.error(mixins.map(line => line.slice(0, 300)).join('\n'))
+    }
     console.error(`server: the full log is in ${join(dirs.data, 'logs', 'latest.log')}`)
 }
 

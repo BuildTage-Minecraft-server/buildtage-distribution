@@ -88,7 +88,7 @@ Each run works as follows:
 5. Write access is checked for every file that is about to change. A missing permission fails the run before the server is touched.
 6. The container is stopped with a grace period of two minutes, so the world is saved.
 7. The changes are copied in. Replaced and removed files are moved to `.deploy-backup/<timestamp>/` in the data directory first, the last five backups are kept.
-8. The container is started and the run waits until its health check passes. If the server crashes while starting, the run stops waiting at once, stops the container and prints the error lines from its log. A start that is merely slow fails after ten minutes and leaves the container running.
+8. The container is started and the run waits until its health check passes. If the server crashes while starting, the run stops waiting at once, stops the container and prints the error lines from its log. For a Mixin failure it also prints the last mixins that were applied, the last one is the mod that broke the start. A start that is merely slow fails after ten minutes and leaves the container running.
 
 To roll back, revert the commit. The next run puts the previous files back.
 
