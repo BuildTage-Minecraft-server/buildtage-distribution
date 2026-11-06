@@ -90,7 +90,12 @@ jobs:
           export AWS_REQUEST_CHECKSUM_CALCULATION=when_required
           export AWS_RESPONSE_CHECKSUM_VALIDATION=when_required
           endpoint="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
-          aws s3 sync site "s3://${R2_BUCKET}" --endpoint-url "$endpoint" --delete --exclude "distribution.json" --cache-control "public, max-age=3600"
+          aws configure set default.s3.multipart_threshold 512MB
+          for attempt in 1 2 3; do
+            aws s3 sync site "s3://${R2_BUCKET}" --endpoint-url "$endpoint" --delete --exclude "distribution.json" --cache-control "public, max-age=3600" && break
+            [ "$attempt" -lt 3 ] || exit 1
+            sleep $((attempt * 10))
+          done
           aws s3 cp site/distribution.json "s3://${R2_BUCKET}/distribution.json" --endpoint-url "$endpoint" --cache-control "no-cache" --content-type "application/json"
 
       - uses: actions/configure-pages@v5
