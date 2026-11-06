@@ -8,10 +8,11 @@ This repository is the single source of truth for what the launcher installs and
 
 1. A push to `main` starts the `Publish distribution` workflow.
 2. `scripts/normalize-names.mjs` renames files whose names cannot be used in URLs, for example `mod%20name.jar` becomes `mod name.jar`. The renaming happens in the build only, the repository is not changed.
-3. The workflow installs Java 17 and Node.js 22 and runs the Forge installer without a window (`scripts/prepare-forge.mjs`), because Nebula expects it to be run by hand. Then it fetches Nebula and runs `generate distro` against this repository.
-4. `scripts/collect-site.mjs` copies exactly the files referenced by `distribution.json` into `site/`, fails if one of them is missing or if the same mod is present twice, and checks the 1 GiB limit of GitHub Pages.
-5. The `site/` folder is published to the configured hosting target, GitHub Pages by default.
-6. If server deployment is enabled, the `Deploy server` workflow starts after a successful publish and updates the Minecraft server, see [Server deployment](#server-deployment).
+3. `scripts/stage-service-mods.mjs` moves the mods that Forge can only find in the `mods` folder to `files/mods/`, see [Mods that load early](#mods-that-load-early). Like the renaming, this happens in the build only.
+4. The workflow installs Java 17 and Node.js 22 and runs the Forge installer without a window (`scripts/prepare-forge.mjs`), because Nebula expects it to be run by hand. Then it fetches Nebula and runs `generate distro` against this repository.
+5. `scripts/collect-site.mjs` copies exactly the files referenced by `distribution.json` into `site/`, fails if one of them is missing or if the same mod is present twice, and checks the 1 GiB limit of GitHub Pages.
+6. The `site/` folder is published to the configured hosting target, GitHub Pages by default.
+7. If server deployment is enabled, the `Deploy server` workflow starts after a successful publish and updates the Minecraft server, see [Server deployment](#server-deployment).
 
 ## Repository layout
 
@@ -27,6 +28,7 @@ servers/<id>/server/mods/              mods for the server only
 servers/<id>/server/config/            configs for the server only
 servers/<id>/server/exclude.txt        files that must not be sent to the server
 scripts/normalize-names.mjs            fixes file names that would break URLs
+scripts/stage-service-mods.mjs         moves mods that Forge finds only in the mods folder
 scripts/prepare-forge.mjs              installs Forge into the cache that Nebula reads
 scripts/collect-site.mjs               builds the folder that gets published
 scripts/deploy-server.mjs              syncs mods and configs into the server container
@@ -55,6 +57,18 @@ Files that players may change, such as client settings, can be listed in `untrac
 ```
 
 Configs in `files/config/` are applied to the server too, see below.
+
+## Mods that load early
+
+Forge reads most mods from the mod list that the launcher passes on the command line. Jars that provide a coremod (transformation service), a mod locator or a dependency locator are different: Forge finds them only in the `mods` folder of the game directory, before it looks at that list. Such a jar that is only in the mod list is never loaded on the client, its network channels are missing and the server closes the connection with `mismatched mod channel list`.
+
+During the build, `scripts/stage-service-mods.mjs` looks for these jars in `forgemods/required/` by the service files inside them and moves them to `files/mods/`. The launcher installs everything from `files/` into the game directory, so the jars end up in the `mods` folder of the player. The repository is not changed and nothing has to be placed in `files/mods/` by hand. The server is not affected, it still reads the same jars from `forgemods/required/`.
+
+A jar in `forgemods/optionalon/` or `forgemods/optionaloff/` that needs this is reported and left in place, because moving it would make it mandatory. To list what would be moved without changing anything, run:
+
+```
+DRY_RUN=true node scripts/stage-service-mods.mjs
+```
 
 ## Server deployment
 

@@ -49,6 +49,11 @@ jobs:
           ROOT: ${{ github.workspace }}
         run: node scripts/normalize-names.mjs
 
+      - name: Stage mods that Forge loads from the mods folder
+        env:
+          ROOT: ${{ github.workspace }}
+        run: node scripts/stage-service-mods.mjs
+
       - name: Prepare server folders
         run: |
           for server in servers/*/; do
