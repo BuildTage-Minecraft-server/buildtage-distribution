@@ -1,3 +1,4 @@
+mods/DistantHorizons-*.jar
 mods/dynamic-fps-*.jar
 mods/embeddium-*.jar
 mods/entityculling-*.jar
