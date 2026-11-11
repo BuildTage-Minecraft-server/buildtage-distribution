@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "name": "CBO",
     "description": "BuildTage CBO server (Minecraft 1.20.1, Forge)",
-    "address": "192.168.0.150:25566",
+    "address": "buildtage.duckdns.org:25566",
     "mainServer": true,
     "autoconnect": true
   },
