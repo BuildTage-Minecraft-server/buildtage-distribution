@@ -24,14 +24,16 @@ servers/<id>/forgemods/optionalon/     optional mods, enabled by default, player
 servers/<id>/forgemods/optionaloff/    optional mods, disabled by default, players only
 servers/<id>/files/                    configs and other files for players
 servers/<id>/files/config/             configs for players and the server
+servers/<id>/files/tacz/               gun packs for players and the server
 servers/<id>/server/mods/              mods for the server only
 servers/<id>/server/config/            configs for the server only
+servers/<id>/server/tacz/              gun packs for the server only
 servers/<id>/server/exclude.txt        files that must not be sent to the server
 scripts/normalize-names.mjs            fixes file names that would break URLs
 scripts/stage-service-mods.mjs         moves mods that Forge finds only in the mods folder
 scripts/prepare-forge.mjs              installs Forge into the cache that Nebula reads
 scripts/collect-site.mjs               builds the folder that gets published
-scripts/deploy-server.mjs              syncs mods and configs into the server container
+scripts/deploy-server.mjs              syncs mods, configs and gun packs into the server container
 repomix.config.json                    settings for packing the repository with Repomix
 ```
 
@@ -79,9 +81,11 @@ The `Deploy server` workflow keeps the `CBO` Docker container in sync with the r
 | `forgemods/required/` | yes | yes |
 | `forgemods/optionalon/`, `forgemods/optionaloff/` | yes | no |
 | `files/config/` | yes | yes, except `*-client.toml` |
+| `files/tacz/` | yes | yes |
 | other paths in `files/` | yes | no |
 | `server/mods/` | no | yes |
 | `server/config/` | no | yes, overrides `files/config/` |
+| `server/tacz/` | no | yes, overrides `files/tacz/` |
 
 Files that must stay out of the server, for example client-only mods that have to remain mandatory for players, are listed in `servers/<id>/server/exclude.txt`. Each line is a pattern relative to the data directory of the server, `*` matches any characters, the case is ignored and lines starting with `#` are comments:
 
@@ -89,6 +93,7 @@ Files that must stay out of the server, for example client-only mods that have t
 mods/embeddium-*.jar
 mods/fancymenu_*.jar
 config/fancymenu/*
+tacz/<pack>/*
 ```
 
 A listed file is never sent. If it is already on the server, it is removed and moved to the backup folder.
@@ -97,7 +102,7 @@ Each run works as follows:
 
 1. File names are normalized as in the publish workflow, then `scripts/deploy-server.mjs` builds the wanted state from the paths above, without the files listed in `exclude.txt`.
 2. Mods are compared by SHA-256 with the jars in the mods folder, so manual changes there are reverted. Other files in that folder are never touched. An empty mod set is refused, which protects the server from a wrong path. If the container has a `/mods` mount, which the image copies into `/data/mods` on every start, the jars are written to the host folder behind that mount, and the stale copies of replaced or removed jars are deleted from `/data/mods`.
-3. Configs are compared with the manifest of the previous deployment instead of the live files, because mods often rewrite their own configs. A config is sent only when its content in the repository changed, and a config removed from the repository stays on the server.
+3. Configs and gun packs are compared with the manifest of the previous deployment instead of the live files, because mods often rewrite their own configs. A file is sent only when its content in the repository changed, and a file removed from the repository stays on the server. A file that is not in the manifest yet is skipped if the server already has the same content.
 4. If nothing changed, the run ends here. A push that only touches the README does not restart the server.
 5. Write access is checked for every file that is about to change. A missing permission fails the run before the server is touched.
 6. The container is stopped with a grace period of two minutes, so the world is saved.
