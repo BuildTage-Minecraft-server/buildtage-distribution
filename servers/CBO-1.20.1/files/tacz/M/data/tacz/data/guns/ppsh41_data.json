@@ -1,0 +1,106 @@
+{
+  "ammo": "tacz:762x25",
+  "rpm": 1100,
+  "bullet": {
+    "life": 0.5,
+    "bullet_amount": 1,
+    "damage": 8,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0.21,
+      "head_shot_multiplier": 1.8,
+      "damage_adjust": [
+        {"distance": 10, "damage": 8},
+        {"distance": 30, "damage": 6.5},
+        {"distance": 50, "damage": 5},
+        {"distance": "infinite", "damage": 4}
+      ]
+    },
+    "speed": 150,
+    "gravity": 0.098,
+    "knockback": 0,
+    "friction": 0.05,
+    "ignite": false,
+    "pierce": 1
+  },
+  "ammo_amount": 35,
+  "extended_mag_ammo_amount": [
+    71,
+    45,
+    71
+  ],
+  "bolt": "open_bolt",
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 2.17,
+      "tactical": 1.53
+    },
+    "cooldown": {
+      "empty": 2.5,
+      "tactical": 2
+    }
+  },
+  "draw_time": 0.27,
+  "put_away_time": 0.4,
+  "aim_time": 0.12,
+  "sprint_time": 0.15,
+  "weight": 3.2,
+  "movement_speed": {
+    // 默认修正
+    "base": 0.0,
+    // 瞄准时
+    "aim": -0.2,
+    // 换弹时
+    "reload": -0.2
+  },
+  "fire_mode": [
+    "auto",
+    "semi"
+  ],
+  "recoil": {
+    "pitch": [
+      {"time": 0, "value": [0.45, 0.45]},
+      {"time": 0.3, "value": [0.45, 0.45]},
+      {"time": 0.5, "value": [-0.125, -0.125]},
+      {"time": 0.65, "value": [0, 0]}
+    ],
+    "yaw": [
+      {"time": 0, "value": [-0.275, 0.275]},
+      {"time": 0.3, "value": [-0.275, 0.275]},
+      {"time": 0.5, "value": [0, 0]}
+    ]
+  },
+  // 受伤晃动幅度修改，乘数，1 为原版晃动程度，0 为完全不晃动，默认为 0.05
+  "hurt_bob_tweak_multiplier": 0.05,
+  // 不准确度
+  "inaccuracy": {
+    // 站立射击散布
+    "stand": 5,
+    // 移动射击散布
+    "move": 5.75,
+    // 潜行射击散布
+    "sneak": 3.5,
+    // 趴下射击散布
+    "lie": 2.5,
+    // 瞄准射击时散布
+    "aim": 0.15
+  },
+  "allow_attachment_types": [
+    "scope",
+    "muzzle",
+    "extended_mag"
+  ],
+  "melee": {
+    "distance": 1,
+    "cooldown": 0.4,
+    "default": {
+      "animation_type": "melee_stock",
+      "distance": 0,
+      "range_angle": 30,
+      "damage": 2,
+      "knockback": 0.45,
+      "prep": 0.1
+    }
+  }
+}

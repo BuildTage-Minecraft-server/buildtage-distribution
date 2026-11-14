@@ -1,0 +1,86 @@
+{
+  "ammo": "tacz:762r",
+  "ammo_amount": 6,
+  "bolt": "closed_bolt",
+  "rpm": 250,
+  "bullet": {
+    "life": 1.2,
+    "bullet_amount": 1,
+    "damage": 20,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0.7,
+      "head_shot_multiplier": 2.3,
+      "damage_adjust": [
+        {"distance": 30, "damage": 20},
+        {"distance": 100, "damage": 12},
+        {"distance": "infinite", "damage": 8}
+      ]
+    },
+    "speed": 450,
+    "gravity": 0.138,
+    "knockback": 0,
+    "friction": 0.015,
+    "ignite": false,
+    "pierce": 3
+  },
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 114514,
+      "tactical": 114514
+    },
+    "cooldown": {
+      "empty": 114514,
+      "tactical": 114514
+    }
+  },
+  "script": "tacz:m870_gun_logic",
+  "script_param": {
+    "bolt_time": 0.01,
+    "bolt_feed_time": 0.01,
+    "intro_empty": 4.77,
+    "intro": 3.1,
+    "loop": 1.56,
+    "ending": 2.73,
+    "intro_empty_feed": 4.77,
+    "loop_feed": 1.56
+  },
+  "draw_time": 0.75,
+  "put_away_time": 1.25,
+  "aim_time": 0.1,
+  "sprint_time": 0.2,
+  "fire_mode": [
+    "semi"
+  ],
+  "burst_data": {
+    "continuous_shoot": false,
+    "count": 1,
+    "bpm": 30,
+    "min_interval": 0.6
+  },
+  "recoil": {
+    "pitch": [
+      {"time": 0, "value": [-0.2, 0.1]},
+      {"time": 0.05, "value": [-0.1, 0.2]},
+      {"time": 0.1, "value": [-0.2, 0.1]},
+      {"time": 0.15, "value": [-0.1, 0.2]},
+      {"time": 0.20, "value": [-0.2, 0.1]}
+    ],
+    "yaw": [
+      {"time": 0, "value": [-0.1, 0.1]},
+      {"time": 0.32, "value": [-0.05, 0.05]},
+      {"time": 0.57, "value": [0, 0]}
+    ]
+  },
+  "allow_attachment_types": [
+  "muzzle"
+  ],
+  "inaccuracy": {
+    "stand": 8.2,
+    "move": 10,
+    "sneak": 6.1,
+    "lie": 4.3,
+    "aim": 0.04
+  }
+}

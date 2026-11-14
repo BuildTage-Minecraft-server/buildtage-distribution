@@ -1,0 +1,167 @@
+{
+  "ammo": "tacz:792x57",
+  "ammo_amount": 20,
+  "extended_mag_ammo_amount": [
+    24,
+    28,
+    32
+  ],
+  "bolt": "open_bolt",
+  "rpm": 720,
+  "bullet": {
+    "life": 1,
+    "bullet_amount": 1,
+    "damage": 10.06,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0.48,
+      "head_shot_multiplier": 1.7,
+      "damage_adjust": [
+        {
+          "distance": 10,
+          "damage": 10.06
+        },
+        {
+          "distance": 25,
+          "damage": 9.06
+        },
+        {
+          "distance": 50,
+          "damage": 8.38
+        },
+        {
+          "distance": "infinite",
+          "damage": 7.38
+        }
+      ]
+    },
+    "speed": 700,
+    "gravity": 0.098,
+    "knockback": 0,
+    "friction": 0.02,
+    "ignite": false,
+    "ignite_entity_time": 2,
+    "pierce": 1
+  },
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 1.48,
+      "tactical": 1.25
+    },
+    "cooldown": {
+      "empty": 2.88,
+      "tactical": 1.75
+    }
+  },
+  "draw_time": 0.2,
+  "put_away_time": 0.2,
+  "aim_time": 0.15,
+  "sprint_time": 0.3,
+  "weight": 5,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": -0.15,
+    "reload": -0.1
+  },
+  "fire_mode": [
+    "auto",
+    "semi"
+  ],
+  "burst_data": {
+    "continuous_shoot": true,
+    "count": 3,
+    "bpm": 900,
+    "min_interval": 0.3
+  },
+  "recoil": {
+    "pitch": [
+      {
+        "time": 0,
+        "value": [
+          1.021,
+          1.021
+        ]
+      },
+      {
+        "time": 0.25,
+        "value": [
+          1.021,
+          1.021
+        ]
+      },
+      {
+        "time": 0.45,
+        "value": [
+          -0.213,
+          -0.213
+        ]
+      },
+      {
+        "time": 0.6,
+        "value": [
+          0,
+          0
+        ]
+      }
+    ],
+    "yaw": [
+      {
+        "time": 0,
+        "value": [
+          -0.34,
+          -0.085
+        ]
+      },
+      {
+        "time": 0.25,
+        "value": [
+          -0.34,
+          0.085
+        ]
+      },
+      {
+        "time": 0.45,
+        "value": [
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "hurt_bob_tweak_multiplier": 0.05,
+  "inaccuracy": {
+    "stand": 5,
+    "move": 5.5,
+    "sneak": 3,
+    "lie": 0.5,
+    "aim": 0.09
+  },
+  "melee": {
+    "distance": 1,
+    "cooldown": 0.7,
+    "default": {
+      "animation_type": "melee_stock",
+      "distance": 0,
+      "range_angle": 40,
+      "cooldown": 0,
+      "damage": 1,
+      "knockback": 0.5,
+      "prep": 0.1
+    }
+  },
+  "allow_attachment_types": [
+    "scope"
+  ],
+  "exclusive_attachments": {
+    "tacz:scope_standard_8x": {
+      "weight": 2.0,
+      "ads_addend": 0.04,
+      "inaccuracy_addend": -0.4,
+      "recoil_modifier": {
+        "pitch": -0.2,
+        "yaw": -0.1
+      }
+    }
+  }
+}
