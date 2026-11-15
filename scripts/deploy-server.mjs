@@ -12,6 +12,7 @@ const keepBackups = Number(process.env.CBO_KEEP_BACKUPS || 5)
 const dryRun = process.env.DRY_RUN === 'true'
 const serverDir = join(root, 'servers', serverId)
 const manifestName = '.deploy-manifest.json'
+const synced = ['config', 'tacz']
 const backupName = '.deploy-backup'
 
 function fail(message) {
@@ -70,10 +71,14 @@ function tree(dir, accept = () => true) {
     return found
 }
 
+function digest(path) {
+    return createHash('sha256').update(readFileSync(path)).digest('hex')
+}
+
 function hashed(files) {
     const result = new Map()
     for (const [name, path] of files) {
-        result.set(name, { path, hash: createHash('sha256').update(readFileSync(path)).digest('hex') })
+        result.set(name, { path, hash: digest(path) })
     }
     return result
 }
@@ -107,12 +112,16 @@ function wantedState() {
         ...tree(join(serverDir, 'files', 'config'), path => !path.endsWith('-client.toml')),
         ...tree(join(serverDir, 'server', 'config'))
     ])
-    return { mods: hashed(keep('mods', mods)), config: hashed(keep('config', config)), excluded }
+    const tacz = new Map([
+        ...tree(join(serverDir, 'files', 'tacz')),
+        ...tree(join(serverDir, 'server', 'tacz'))
+    ])
+    return { mods: hashed(keep('mods', mods)), config: hashed(keep('config', config)), tacz: hashed(keep('tacz', tacz)), excluded }
 }
 
-function readManifest(dataDir) {
+function readManifest(dataDir, kind) {
     try {
-        return new Map(Object.entries(JSON.parse(readFileSync(join(dataDir, manifestName), 'utf8')).config))
+        return new Map(Object.entries(JSON.parse(readFileSync(join(dataDir, manifestName), 'utf8'))[kind]))
     } catch {
         return new Map()
     }
@@ -120,9 +129,8 @@ function readManifest(dataDir) {
 
 function plan(wanted, dirs) {
     const live = hashed(jars(dirs.mods))
-    const previous = readManifest(dirs.data)
     const mods = []
-    const config = []
+    const files = []
 
     for (const [name, item] of wanted.mods) {
         if (!live.has(name)) {
@@ -136,16 +144,23 @@ function plan(wanted, dirs) {
             mods.push({ kind: 'mods', action: 'removed', name })
         }
     }
-    for (const [name, item] of wanted.config) {
-        if (!previous.has(name)) {
-            config.push({ kind: 'config', action: 'added', name, source: item.path })
-        } else if (previous.get(name) !== item.hash) {
-            config.push({ kind: 'config', action: 'updated', name, source: item.path })
+    for (const kind of synced) {
+        const previous = readManifest(dirs.data, kind)
+        for (const [name, item] of wanted[kind]) {
+            if (!previous.has(name)) {
+                const target = join(dirs[kind], name)
+                if (!existsSync(target) || digest(target) !== item.hash) {
+                    files.push({ kind, action: 'added', name, source: item.path })
+                }
+            } else if (previous.get(name) !== item.hash) {
+                files.push({ kind, action: 'updated', name, source: item.path })
+            }
         }
     }
 
     const byName = (a, b) => a.name.localeCompare(b.name)
-    return [...mods.sort(byName), ...config.sort(byName)]
+    const byKind = (a, b) => a.kind.localeCompare(b.kind) || byName(a, b)
+    return [...mods.sort(byName), ...files.sort(byKind)]
 }
 
 function report(changes) {
@@ -180,7 +195,7 @@ function preflight(changes, dirs) {
             parent = dirname(parent)
         }
         check(parent, constants.W_OK)
-        if (change.kind === 'config' && existsSync(target)) {
+        if (change.kind !== 'mods' && existsSync(target)) {
             check(target, constants.R_OK | constants.W_OK)
         }
         if (change.kind === 'mods' && existsSync(join(dirs.runtimeMods, change.name))) {
@@ -238,8 +253,8 @@ function apply(changes, wanted, dirs) {
         }
     }
 
-    const config = Object.fromEntries([...wanted.config].map(([name, item]) => [name, item.hash]))
-    writeFileSync(join(dirs.data, manifestName), `${JSON.stringify({ config }, null, 2)}\n`)
+    const manifest = Object.fromEntries(synced.map(kind => [kind, Object.fromEntries([...wanted[kind]].map(([name, item]) => [name, item.hash]))]))
+    writeFileSync(join(dirs.data, manifestName), `${JSON.stringify(manifest, null, 2)}\n`)
 
     if (existsSync(backupRoot)) {
         for (const name of readdirSync(backupRoot).sort().reverse().slice(keepBackups)) {
@@ -330,6 +345,7 @@ const dirs = {
     data: dataDir,
     mods: process.env.CBO_MODS_DIR || mountSource('/mods') || join(dataDir, 'mods'),
     config: join(dataDir, 'config'),
+    tacz: join(dataDir, 'tacz'),
     runtimeMods: join(dataDir, 'mods')
 }
 
