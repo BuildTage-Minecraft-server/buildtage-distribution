@@ -109,6 +109,18 @@
       "attachmentType": "SCOPE"
     },
     {
+      "id": "tacz:scope_1873_6x",
+      "displayName": "tacz.attachment.scope_1873_6x.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
+      "id": "tacz:pso1",
+      "displayName": "tacz.attachment.pso1.name",
+      "unlockLevel": 0,
+      "attachmentType": "SCOPE"
+    },
+    {
       "id": "tacz:shotgun_extended_mag_3",
       "displayName": "tacz.attachment.shotgun_extended_mag_3.name",
       "unlockLevel": 0,
